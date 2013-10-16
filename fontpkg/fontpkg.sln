@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fontpkg", "fontpkg\fontpkg.csproj", "{0FE6DED5-8E6E-4D34-BD7E-5769D9D4A133}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FE6DED5-8E6E-4D34-BD7E-5769D9D4A133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FE6DED5-8E6E-4D34-BD7E-5769D9D4A133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FE6DED5-8E6E-4D34-BD7E-5769D9D4A133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FE6DED5-8E6E-4D34-BD7E-5769D9D4A133}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
