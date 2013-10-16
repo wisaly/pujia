@@ -1,0 +1,41 @@
+.inf.dat  big endian
+1 int16 字库文字数量
+1 int16 字库文件宽度
+1 int16 字库文件高度
+1 byte 每个字的宽度
+1 byte 每个字的高度
+
+.cod.dat  big endian
+长度=(文字数量*8) byte
+每8byte:
+1 int16 UTF16-BE编码文字
+1 int16 文字x坐标
+1 int16 文字y坐标
+1 int16 文字实际宽度
+
+.ctdb.dat  big endian
+8 byte header 40 43 54 44 00 00 01 F7 0E 
+1 int32 文本id区域？
+1 int16 第二部分块数量
+1 int16 文本数量
+
+1 int32 文本指针偏移量
+1 int32 第二部分偏移量
+1 int32 文本偏移量
+1 int32 0
+
+文本指针区域
+1 int32 文本id
+1 int16 文本id 2
+1 int16 文本偏移量
+末尾0对齐16字节
+
+第二部分
+未知，每段18字节
+
+文本区域
+00结束的字符串
+
+不能识别的字符：
+30fb 416 96
+246c 608 448
