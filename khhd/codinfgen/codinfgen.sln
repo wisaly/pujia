@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codinfgen", "codinfgen\codinfgen.csproj", "{46E0E10F-B887-4BD5-9667-43FFE0784DCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "khfontgen", "khfontgen\khfontgen.csproj", "{953E84CB-4BFA-4542-9167-549335E019E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "khtext", "khtext\khtext.csproj", "{6518B1CC-9C01-4BC7-BD72-D63F42465C09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46E0E10F-B887-4BD5-9667-43FFE0784DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46E0E10F-B887-4BD5-9667-43FFE0784DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46E0E10F-B887-4BD5-9667-43FFE0784DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46E0E10F-B887-4BD5-9667-43FFE0784DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{953E84CB-4BFA-4542-9167-549335E019E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953E84CB-4BFA-4542-9167-549335E019E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953E84CB-4BFA-4542-9167-549335E019E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953E84CB-4BFA-4542-9167-549335E019E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6518B1CC-9C01-4BC7-BD72-D63F42465C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6518B1CC-9C01-4BC7-BD72-D63F42465C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6518B1CC-9C01-4BC7-BD72-D63F42465C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6518B1CC-9C01-4BC7-BD72-D63F42465C09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
