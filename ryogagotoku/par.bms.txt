@@ -1,0 +1,84 @@
+#如龙系列PARC包文件
+
+#指定压缩算法为yakuza
+comtype yakuza
+#指定读写文件字节序，默认是little
+endian big
+#匹配文件幻数，如果不符则退出
+idstring "PARC"
+#读取long(4字节)数据到变量
+get unknownA long
+get unknownB long
+get unknownC long
+get foldernums long #包含目录数量
+get folderoffset long #目录偏移地址
+get filenums long #包含总文件数量
+get fileoffset long #文件偏移地址
+
+#每个文件目录结构占64字节，文件目录名起始地址为32字节，相加即为文件名开始地址
+math foldnamesaddr = 32
+math filenamesaddr = foldernums
+math filenamesaddr *= 64
+math filenamesaddr += foldnamesaddr
+#定位文件目录内容开始地址和文件开始地址
+math foldinfoaddr = folderoffset
+math fileinfoaddr = fileoffset
+
+for i = 0 < foldernums
+    #前往文件夹起始地址
+    goto foldinfoaddr
+    get folder_unknownA long
+    get folder_unknownB long
+    #该目录下文件数量
+    get folder_filenums long
+    #文件偏移地址
+    get folder_fileoffset long
+    get folder_unknownE long
+    get folder_unknownF long
+    get folder_unknownG long
+    get folder_unknownH long
+    #记录跳过头部后的地址
+    savepos foldinfoaddr
+    #前往文件夹名称所在位置，获取名称
+    goto foldnamesaddr
+    getdstring foldname 64
+    savepos foldnamesaddr
+    
+    for j = 0 < folder_filenums
+        #每个文件描述为32字节
+        math tmp = folder_fileoffset
+        math tmp += j
+        math tmp *= 32
+        math tmp += fileinfoaddr
+        goto tmp
+        #获取文件描述信息
+        get file_compflags long
+        get file_filesize long
+        get file_filesizecomp long
+        get file_fileoffset long
+        get file_unknownE long
+        get file_unknownF long
+        get file_unknownG long
+        get file_chksum long
+        #获取文件名
+        math tmp = folder_fileoffset
+        math tmp += j
+        math tmp *= 64
+        math tmp += filenamesaddr
+        goto tmp
+        getdstring filename 64
+        
+        set fn string foldname
+        string fn += /
+        string fn += filename
+        
+        #如果压缩标志最高位是1
+        if file_compflags & 0x80000000
+            math file_fileoffset += 0x10
+            math file_filesizecomp -= 0x10
+            clog fn file_fileoffset file_filesizecomp file_filesize
+        else
+            log fn file_fileoffset file_filesize
+        endif
+    next j
+next i

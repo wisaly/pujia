@@ -1,0 +1,37 @@
+idstring "TLZC"
+get name basename
+string name + ".FPS4"
+comtype MSF
+get version long
+get tzsize long
+get tsize long
+goto 0x1D
+set blockcount tsize
+math blockcount + 0xFFFF
+math blockcount / 0x10000
+for i = 0 < blockcount
+get zsize short
+putarray 0 i zsize
+next i
+for i = 0 < blockcount
+savepos offset
+getarray ZSIZE 0 i
+if tsize >= 0x10000
+append
+clog MEMORY_FILE OFFSET ZSIZE 0x10000
+append
+else
+append
+if ZSIZE == 0
+log MEMORY_FILE OFFSET tsize
+else
+clog MEMORY_FILE OFFSET ZSIZE tsize
+endif
+append
+endif
+math tsize -= 0x10000
+math offset + ZSIZE
+goto offset
+next i
+get SIZE asize MEMORY_FILE
+log name 0 SIZE MEMORY_FILE
