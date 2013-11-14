@@ -28,7 +28,7 @@ namespace tohr_decompress
                         //stepFlag = 6;
 
                         p2 = sin.ReadByte();
-                        if (p2 >= 0x40)
+                        if (p2 >= 0x80)
                         {
                             F = (byte)(p2 - 0x40);
                         }
@@ -36,10 +36,10 @@ namespace tohr_decompress
                         {
                             //stepFlag = 7;
                             p3 = sin.ReadByte();
-                            p2 = (byte)(p2 * 2 + p3 * 4);
+                            p2 = (byte)(p2 << 8 + p3);
                             if (p2 > 0)
                             {
-                                p2 += 2;
+                                p2 += 0xbf;
                             }
                             F = p2;
                         }
@@ -65,20 +65,20 @@ namespace tohr_decompress
                             //stepFlag = 5;
                             p3 = sin.ReadByte();
                             S = ((p2 & 0x7f) << 8) + p3 + 1;
-                            P = (p1 & 0x3f) * 2 + (p2 >> 7) + 4;
+                            P = p1 * 2 + (p2 >> 7) - 0x17c;
                         }
                         else
                         {
                             //stepFlag = 0;
                             S = ((p1 & 0x3) << 8) + p2 + 1;
-                            P = ((p1 >> 2) & 0xf) + 3;
+                            P = (p1 >> 2) - 0x1d;
                         }
                     }
                     else
                     {
                         //stepFlag = 0;
                         S = (p1 & 0xf) + 1;
-                        P = (p1 / 0x10) - 2;
+                        P = (p1 >> 4) - 2;
                     }
 
                     long curpos = sms.Position;
