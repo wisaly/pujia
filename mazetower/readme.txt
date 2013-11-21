@@ -21,3 +21,13 @@ mazetower -r x:\xx\data
 origin = fileOffset + fileLength;
 next = origin + (0x200 - origin % 0x200);
 
+°ü½á¹¹£¨script.sdt£©
+0x00 :
+8 byte fix header : 44 53 41 52 43 20 46 4C (DSARC FL)
+1 int32 file count : 00 00 00 04 
+1 int32 0
+0x10 :
+40 byte string ,file name
+1 int32 file length
+1 int32 file offset (from 0)
+...

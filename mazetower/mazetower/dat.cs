@@ -16,7 +16,8 @@ namespace mazetower
             public Int32 fileLength;
         }
 
-        static Int64 fixHeader = 0x50533346535F5631;
+        static Int64 fixHeaderPS3FS_V1 = 0x50533346535F5631;
+        static Int64 fixHeaderDSARCFL = 0x445341524320464C;
         static void align(ref int origin)
         {
             origin = origin + (0x200 - origin % 0x200);
@@ -39,7 +40,8 @@ namespace mazetower
             }
 
             Int64 fixedHeaderRead = s.ReadInt64BigEndian();
-            if (fixedHeaderRead != fixHeader)
+            if (fixedHeaderRead != fixHeaderPS3FS_V1 &&
+                fixedHeaderRead != fixHeaderDSARCFL)
             {
                 throw new Exception("文件头不能识别");
             }
@@ -47,20 +49,37 @@ namespace mazetower
             Int32 fileCount = s.ReadInt32BigEndian();
             s.Position += 4;
 
-            Console.WriteLine("文件头解析:共有{0}个文件", fileCount);
 
             List<headerNode> headers = new List<headerNode>();
 
-            for (int i = 0; i < fileCount;i++ )
+            if (fixedHeaderRead == fixHeaderPS3FS_V1)
             {
-                headerNode h = new headerNode();
-                h.fileName = s.ReadSimpleString(0x30);
-                s.Position += 4;
-                h.fileLength = s.ReadInt32BigEndian();
-                s.Position += 4;
-                h.fileOffset = s.ReadInt32BigEndian();
-                headers.Add(h);
+                Console.WriteLine("PS3FS_V1格式");
+                for (int i = 0; i < fileCount; i++)
+                {
+                    headerNode h = new headerNode();
+                    h.fileName = s.ReadSimpleString(0x30);
+                    s.Position += 4;
+                    h.fileLength = s.ReadInt32BigEndian();
+                    s.Position += 4;
+                    h.fileOffset = s.ReadInt32BigEndian();
+                    headers.Add(h);
+                }
             }
+            else if (fixedHeaderRead == fixHeaderDSARCFL)
+            {
+                Console.WriteLine("DSARC FL格式");
+                for (int i = 0; i < fileCount; i++)
+                {
+                    headerNode h = new headerNode();
+                    h.fileName = s.ReadSimpleString(0x28);
+                    h.fileLength = s.ReadInt32BigEndian();
+                    h.fileOffset = s.ReadInt32BigEndian();
+                    headers.Add(h);
+                }
+            }
+
+            Console.WriteLine("文件头解析:共有{0}个文件", fileCount);
 
             for (int i = 0; i < headers.Count; i++)
             {
@@ -103,7 +122,7 @@ namespace mazetower
             
             StreamEx s = new StreamEx(input + ".repack.dat", FileMode.Create, FileAccess.Write);
 
-            s.WriteInt64BigEndian(fixHeader);
+            s.WriteInt64BigEndian(fixHeaderPS3FS_V1);
             s.WriteInt32BigEndian(inputFiles.Length);
             s.WriteInt32BigEndian(0);
 
