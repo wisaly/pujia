@@ -69,13 +69,14 @@ namespace togf
 
             for (int i = 0; i < texts.Length; i++)
             {
+                texts[i] = texts[i].Remove(texts[i].Length - 5);
                 textOffset[i] = (Int32)s.Position;
                 // 处理字符集差异
                 foreach (KeyValuePair<string, string> kvp in _convertChar)
                 {
                     texts[i] = texts[i].Replace(kvp.Value, kvp.Key);
                 }
-                s.WriteString(texts[i], texts[i].Length, _sourceEncoding);
+                s.WriteString(texts[i], _sourceEncoding.GetByteCount(texts[i]) + 1, _sourceEncoding);
             }
 
             s.Position = 4;
