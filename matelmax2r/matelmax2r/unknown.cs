@@ -13,7 +13,7 @@ namespace matelmax2r
     {
         static List<KeyValuePair<string, string>> _convertChar = new List<KeyValuePair<string, string>>()
             {
-                //new KeyValuePair<string, string>("\n", "\r\n"),
+                new KeyValuePair<string, string>("\n", "\r\n"),
                 //new KeyValuePair<string, string>("\v",   "{vtab}"),
                 //new KeyValuePair<string, string>("\a",   "{bell}"),
                 //new KeyValuePair<string, string>("\b",   "{back}"),
@@ -245,7 +245,3 @@ namespace matelmax2r
         }
     }
 }
-t²ÉÎqşjÁ¯œ7e³ÁNÂz)Ø!%:ÈCË5B´ èP2)ÇíyñSúã¾‡Ä<k¢OOò)ı0uFÄ¶„Q aÑCZûM“{Ûî}A	°oT2Uy½òÑtSõ›ƒ€Í­ ÒæSú<œbÊÔZ;®Ttïí”ñ·í"œÂje’ºÙĞÿ—ê$< 7:£Ô¢¬øJêR;îeºÔ(U¾f£µ3‡â®r±À(l+!°ˆP5×^Æ"h\#La¶Êé½3P$qXi@¶31xß©¯À©ß5Ã?Ô6»i1‡+ìB±¿g<›ş&j:õ‡.Š¿xìš°rˆ |Ö¶:°ÉCŒÿ›ÛEM:qı3Cğ~é‚Šm²Ãƒâé&ò”ÿï7Ÿ‚ƒJ sóªŒ«¨9½—BçPÅ…È¨ú’ ÍJ\Ø.Z C(xo=6ª:\úy°ÂDoŒù®+±œÁÂ€ŒßÁbBv€&ÎÄwà#áF“j£×QØw
-2‡bâ?¾uA®â®â8Ša-<"]Ó†¶™0*`çOpÏ+à1ıŞátŠÎ#ù¦²Å±Ìpg U»ÀqÏ²ÏP†·µ¡×/²VÜ·pV‚ÿy³vbÏıpìÎ¾ö4©äQõ3ô7O—•­åùÕÂ€ÈYyñj'D?Õñùó<QòM¹†Å=4b’Ôæ´øO‡€1>.¬Í—Q³œÃš³RÙu3V¼Ü÷&t	SĞüô m;Zô˜£‘Ô¿s":"È˜ÀÁxU¨ÊŠƒãä×tĞvyŞØz"›Ioá½“t¯¨Äœh~ 2Ğ`2Wl:z4Y‹1ç€_Ğ¨Zk+YÆ³Æ¿Otn'´ØQ¸n1&È²WÕX³‹'fAç-=ù)À»ç×-¹ïÖ›5•HÓ¦Âdí\Ğ
-0/´Û)¾pøş(Œ;íTêÅ‚.]è ÁÁ€,"Á6økoÑ¥§•EI‹D£Vuˆs°[bŒ}ƒW}+CÀTx›Å·Y<¾œæd2o°ÑXˆd—lUü„ÃR°"ˆYhÚ‚ƒ–aó<ÆÇpš4•ªUË“÷1ˆ6-”ŞçtŸg_ãÚ]wû{±*›ô¯£\rÛ‹¯:2Èæ kì-#·¢ÁR
-9ÛG ğ˜ÎÌäQº“                                                                                                                                
