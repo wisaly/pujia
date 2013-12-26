@@ -1,0 +1,251 @@
+ï»¿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Firefly;
+using System.IO;
+using Firefly.Texting;
+using Firefly.TextEncoding;
+
+namespace matelmax2r
+{
+    class unknown
+    {
+        static List<KeyValuePair<string, string>> _convertChar = new List<KeyValuePair<string, string>>()
+            {
+                //new KeyValuePair<string, string>("\n", "\r\n"),
+                //new KeyValuePair<string, string>("\v",   "{vtab}"),
+                //new KeyValuePair<string, string>("\a",   "{bell}"),
+                //new KeyValuePair<string, string>("\b",   "{back}"),
+                //new KeyValuePair<string, string>("\x10", "{dle}"),
+                //new KeyValuePair<string, string>("\x11", "{dc1}"),
+                //new KeyValuePair<string, string>("\x3",  "{etx}"),
+                new KeyValuePair<string, string>("â™ª",  "{tune}"),
+                new KeyValuePair<string, string>("ãƒ»", "Â·")
+                //new KeyValuePair<string, string>("âˆ€", "âˆ¨"),
+                //new KeyValuePair<string, string>("âˆƒ", "âˆˆ")
+            };
+
+        static Encoding _sourceEncoding = TextEncoding.UTF16;
+        static Encoding _destEncoding = TextEncoding.GB2312;
+
+        static Int32 _fixHeaderType1 = 0x53455455;  // SETU
+        static Int32 _fixHeaderType2 = 0x00;        // 00
+        static Int32 _fixHeaderType3 = 0x54435243;  // TCRC
+
+        static string readUnicodeString(StreamEx s,int endzerobyteCount)
+        {
+            List<byte> bytes = new List<byte>();
+            int endzeros = 0;
+            while (s.Position < s.Length)
+            {
+                byte b = s.ReadByte();
+                if (b == 0)
+                {
+                    endzeros ++;
+                }
+                else
+                {
+                    endzeros = 0;
+                }
+
+                if (endzeros == endzerobyteCount)
+                {
+                    bytes.RemoveRange(bytes.Count - endzerobyteCount + 1, endzerobyteCount - 1);
+                    break;
+                }
+                
+                bytes.Add(b);
+            }
+           
+            return new string(_sourceEncoding.GetChars(bytes.ToArray()));
+        }
+
+        static public int exportFile(string path)
+        {
+            StreamEx s = new StreamEx(path, FileMode.Open, FileAccess.Read);
+
+            List<string> texts = new List<string>();
+
+            Int32 header = s.ReadInt32BigEndian();
+            if (header == _fixHeaderType1)
+            {
+                Console.Write("[SETU]");
+                Int32 textCount = s.ReadInt32();
+
+                Int32[] textOffset = new Int32[textCount];
+                for (int i = 0; i < textCount;i++ )
+                {
+                    textOffset[i] = s.ReadInt32();
+                }
+
+                for (int i = 0; i < textCount;i++ )
+                {
+                    string txt = "";
+                    if (textOffset[i] != 0)
+                    {
+                        s.Position = textOffset[i];
+                        txt = readUnicodeString(s,2);
+                    }
+                    texts.Add(txt);
+                }
+            }
+            else if ((header >> 16) == _fixHeaderType2)
+            {
+                Console.Write("[0000]");
+                s.Position = 2;
+                while(s.Position < s.Length)
+                {
+                    texts.Add(readUnicodeString(s, 2));
+                }
+            }
+            else if (header == _fixHeaderType3)
+            {
+                Console.Write("[TCRC]");
+                Int32 textOffset = s.ReadInt32() + 8;
+                List<Int32> indexes = new List<Int32>();
+                while (s.Position < textOffset)
+                {
+                    s.Position += 4;
+                    indexes.Add(s.ReadInt32());
+                }
+                if(s.ReadInt32BigEndian() != 0x54455854) //TEXT
+                {
+                    throw new Exception("TEXTæ®µé”™è¯¯");
+                }
+                textOffset += 8;
+                for (int i = 0; i < indexes.Count;i++ )
+                {
+                    s.Position = textOffset + indexes[i];
+                    texts.Add(readUnicodeString(s, 4));
+                }
+            }
+            else
+            {
+                throw new Exception("ä¸æ”¯æŒçš„æ–‡ä»¶å¤´");
+            }
+
+            for (int i = 0; i < texts.Count;i++ )
+            {
+                // å¤„ç†å­—ç¬¦é›†å·®å¼‚
+                foreach (KeyValuePair<string, string> kvp in _convertChar)
+                {
+                    texts[i] = texts[i].Replace(kvp.Key, kvp.Value);
+                }
+            }
+            Agemo.WriteFile(path + ".txt", _destEncoding, from txt in texts select txt + "{END}");
+
+            return texts.Count;
+        }
+
+
+        static public int importFile(string path)
+        {
+            string[] texts = Agemo.ReadFile(path + ".txt", _destEncoding);
+            StreamEx ssource = new StreamEx(path, FileMode.Open, FileAccess.Read);
+
+            Int32 header = ssource.ReadInt32BigEndian();
+            if (header != 0x00444D47)
+            {
+                throw new Exception("ä¸æ”¯æŒçš„æ–‡ä»¶å¤´");
+            }
+
+            ssource.Position = 0x18;
+            Int32 textCount = ssource.ReadInt32BigEndian();
+            Int32 textOffset = ssource.ReadInt32BigEndian() + textCount * 8 + 0x30;
+
+            StreamEx sdest = new StreamEx(path + ".imp", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+
+            ssource.Position = 0;
+            sdest.WriteFromStream(ssource, textOffset);
+
+            for (int i = 0; i < texts.Length; i++)
+            {
+                texts[i] = texts[i].Remove(texts[i].Length - 5);
+                // å¤„ç†å­—ç¬¦é›†å·®å¼‚
+                foreach (KeyValuePair<string, string> kvp in _convertChar)
+                {
+                    texts[i] = texts[i].Replace(kvp.Value, kvp.Key);
+                }
+                sdest.WriteString(texts[i], _sourceEncoding.GetByteCount(texts[i]) + 1, _sourceEncoding);
+            }
+
+            Int32 textLength = (int)(sdest.Position - textOffset);
+            sdest.Position = 0x20;
+            sdest.WriteInt32BigEndian(textLength);
+
+            sdest.Close();
+
+            return texts.Length;
+        }
+
+
+        static public void export(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                throw new Exception("è·¯å¾„ä¸å­˜åœ¨");
+            }
+
+            string[] files = Directory.GetFiles(path, "*.unknown");
+            string[] dirs = Directory.GetDirectories(path);
+            Console.WriteLine("{0}:å…±æœç´¢åˆ°{1}ä¸ªæ–‡ä»¶,{2}ä¸ªå­ç›®å½•", path, files.Length, dirs.Length);
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                try
+                {
+                    Console.WriteLine("{0}/{1}å·²å¤„ç†æ–‡ä»¶{2}:å¯¼å‡º{3}è¡Œã€‚",
+                        i + 1,
+                        files.Length,
+                        files[i],
+                        exportFile(files[i]));
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine("[å‡ºé”™]{0}/{1}æ–‡ä»¶{2}:{3}",
+                        i + 1,
+                        files.Length,
+                        files[i],
+                        ex.Message);
+                }
+            }
+
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                export(dirs[i]);
+            }
+        }
+        static public void import(string path)
+        {
+
+            if (!Directory.Exists(path))
+            {
+                throw new Exception("è·¯å¾„ä¸å­˜åœ¨");
+            }
+
+            string[] files = Directory.GetFiles(path, "*.unknown");
+            Console.WriteLine("å…±æœç´¢åˆ°{0}ä¸ªæ–‡ä»¶", files.Length);
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                try
+                {
+                    Console.WriteLine("{0}/{1}å·²å¤„ç†æ–‡ä»¶{2}:å¯¼å…¥{3}è¡Œã€‚",
+                        i + 1,
+                        files.Length,
+                        files[i],
+                        importFile(files[i]));
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+    }
+}
+t²ÉÎqşjÁ¯œ7e³ÁNÂz)Ø!%:ÈCË5B´ èP2)ÇíyñSúã¾‡Ä<k¢OOò)ı0uFÄ¶„Q aÑCZûM“{Ûî}A	°oT2Uy½òÑtSõ›ƒ€Í­ ÒæSú<œbÊÔZ;®Ttïí”ñ·í"œÂje’ºÙĞÿ—ê$< 7:£Ô¢¬øJêR;îeºÔ(U¾f£µ3‡â®r±À(l+!°ˆP5×^Æ"h\#La¶Êé½3P$qXi@¶31xß©¯À©ß5Ã?Ô6»i1‡+ìB±¿g<›ş&j:õ‡.Š¿xìš°rˆ |Ö¶:°ÉCŒÿ›ÛEM:qı3Cğ~é‚Šm²Ãƒâé&ò”ÿï7Ÿ‚ƒJ sóªŒ«¨9½—BçPÅ…È¨ú’ ÍJ\Ø.Z C(xo=6ª:\úy°ÂDoŒù®+±œÁÂ€ŒßÁbBv€&ÎÄwà#áF“j£×QØw
+2‡bâ?¾uA®â®â8Ša-<"]Ó†¶™0*`çOpÏ+à1ıŞátŠÎ#ù¦²Å±Ìpg U»ÀqÏ²ÏP†·µ¡×/²VÜ·pV‚ÿy³vbÏıpìÎ¾ö4©äQõ3ô7O—•­åùÕÂ€ÈYyñj'D?Õñùó<QòM¹†Å=4b’Ôæ´øO‡€1>.¬Í—Q³œÃš³RÙu3V¼Ü÷&t	SĞüô m;Zô˜£‘Ô¿s":"È˜ÀÁxU¨ÊŠƒãä×tĞvyŞØz"›Ioá½“t¯¨Äœh~ 2Ğ`2Wl:z4Y‹1ç€_Ğ¨Zk+YÆ³Æ¿Otn'´ØQ¸n1&È²WÕX³‹'fAç-=ù)À»ç×-¹ïÖ›5•HÓ¦Âdí\Ğ
+0/´Û)¾pøş(Œ;íTêÅ‚.]è ÁÁ€,"Á6økoÑ¥§•EI‹D£Vuˆs°[bŒ}ƒW}+CÀTx›Å·Y<¾œæd2o°ÑXˆd—lUü„ÃR°"ˆYhÚ‚ƒ–aó<ÆÇpš4•ªUË“÷1ˆ6-”ŞçtŸg_ãÚ]wû{±*›ô¯£\rÛ‹¯:2Èæ kì-#·¢ÁR
+9ÛG ğ˜ÎÌäQº“                                                                                                                                
