@@ -14,12 +14,8 @@ namespace matelmax2r
         static List<KeyValuePair<string, string>> _convertChar = new List<KeyValuePair<string, string>>()
             {
                 new KeyValuePair<string, string>("\n", "\r\n"),
-                //new KeyValuePair<string, string>("\v",   "{vtab}"),
-                //new KeyValuePair<string, string>("\a",   "{bell}"),
-                //new KeyValuePair<string, string>("\b",   "{back}"),
-                //new KeyValuePair<string, string>("\x10", "{dle}"),
-                //new KeyValuePair<string, string>("\x11", "{dc1}"),
-                //new KeyValuePair<string, string>("\x3",  "{etx}"),
+		        new KeyValuePair<string, string>("\x00","{null}"),
+		        new KeyValuePair<string, string>("\x3f","{0x003f}"),
                 new KeyValuePair<string, string>("♪",  "{tune}"),
                 new KeyValuePair<string, string>("・", "·")
                 //new KeyValuePair<string, string>("∀", "∨"),
@@ -40,7 +36,7 @@ namespace matelmax2r
             while (s.Position < s.Length)
             {
                 byte b = s.ReadByte();
-                if (b == 0)
+                if ((b == 0) && ((bytes.Count % 2 == 1 && endzeros != 0) || (bytes.Count % 2 == 0)))
                 {
                     endzeros ++;
                 }
@@ -113,11 +109,35 @@ namespace matelmax2r
                 {
                     throw new Exception("TEXT段错误");
                 }
+
+                Int32 nextBlockOffset = s.ReadInt32() + (Int32)s.Position;
+
                 textOffset += 8;
+                texts.Add("{TEXT}");
                 for (int i = 0; i < indexes.Count;i++ )
                 {
                     s.Position = textOffset + indexes[i];
                     texts.Add(readUnicodeString(s, 4));
+                }
+
+                if (nextBlockOffset < s.Length)
+                {
+                    s.Position = nextBlockOffset;
+                    if (s.ReadInt32BigEndian() == 0x4E504354) //NCPT
+                    {
+                        texts.Add("{NCPT}");
+                        s.Position = s.ReadInt32() + s.Position;
+                    }
+                    if (s.ReadInt32BigEndian() == 0x4E414D45) //NAME
+                    {
+                        texts.Add("{NAME}");
+                        Int32 nameBlockLength = s.ReadInt32();
+                        s.Position += 2;
+                        while (s.Position < s.Length)
+                        {
+                            texts.Add(readUnicodeString(s, 2));
+                        }
+                    }
                 }
             }
             else
@@ -142,22 +162,6 @@ namespace matelmax2r
         static public int importFile(string path)
         {
             string[] texts = Agemo.ReadFile(path + ".txt", _destEncoding);
-            StreamEx ssource = new StreamEx(path, FileMode.Open, FileAccess.Read);
-
-            Int32 header = ssource.ReadInt32BigEndian();
-            if (header != 0x00444D47)
-            {
-                throw new Exception("不支持的文件头");
-            }
-
-            ssource.Position = 0x18;
-            Int32 textCount = ssource.ReadInt32BigEndian();
-            Int32 textOffset = ssource.ReadInt32BigEndian() + textCount * 8 + 0x30;
-
-            StreamEx sdest = new StreamEx(path + ".imp", System.IO.FileMode.Create, System.IO.FileAccess.Write);
-
-            ssource.Position = 0;
-            sdest.WriteFromStream(ssource, textOffset);
 
             for (int i = 0; i < texts.Length; i++)
             {
@@ -167,13 +171,131 @@ namespace matelmax2r
                 {
                     texts[i] = texts[i].Replace(kvp.Value, kvp.Key);
                 }
-                sdest.WriteString(texts[i], _sourceEncoding.GetByteCount(texts[i]) + 1, _sourceEncoding);
             }
 
-            Int32 textLength = (int)(sdest.Position - textOffset);
-            sdest.Position = 0x20;
-            sdest.WriteInt32BigEndian(textLength);
+            StreamEx ssource = new StreamEx(path, FileMode.Open, FileAccess.Read);
+            StreamEx sdest = new StreamEx(path + ".imp", System.IO.FileMode.Create, System.IO.FileAccess.Write);
 
+            Int32 header = ssource.ReadInt32BigEndian();
+            if (header == _fixHeaderType1)
+            {
+                Console.Write("[SETU]");
+                sdest.WriteInt32BigEndian(_fixHeaderType1);
+                sdest.WriteInt32(texts.Length);
+
+                Int32[] textOffset = new Int32[texts.Length];
+
+                for (int i = 0; i < texts.Length;i++ )
+                {
+                    sdest.WriteInt32(0); // 长度占位写0
+                }
+
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    if (texts[i].Length == 0)
+                    {
+                        textOffset[i] = 0;
+                        continue;
+                    }
+                    textOffset[i] = (Int32)sdest.Position; // 文本偏移量
+                    sdest.Write(_sourceEncoding.GetBytes(texts[i]));
+                    sdest.WriteInt16(0); // 结束0
+                }
+
+                ssource.Position = ssource.Length - 139;
+                sdest.WriteFromStream(ssource, 139);
+
+                sdest.Position = 8;
+                for (int i = 0; i < textOffset.Length;i++ )
+                {
+                    sdest.WriteInt32(textOffset[i]);
+                }
+            }
+            else if ((header >> 16) == _fixHeaderType2)
+            {
+                Console.Write("[0000]");
+                sdest.WriteInt16(0);
+
+                for(int i = 0;i < texts.Length;i++)
+                {
+                    sdest.Write(_sourceEncoding.GetBytes(texts[i]));
+                    sdest.WriteInt16(0);
+                }
+            }
+            else if (header == _fixHeaderType3)
+            {
+                Console.Write("[TCRC]");
+                Int32 textBlockOffset = ssource.ReadInt32() + 8; // 指向"TEXT"
+
+                ssource.Position = 0;
+                sdest.WriteFromStream(ssource, textBlockOffset); // 写至索引结束
+                sdest.WriteFromStream(ssource, 4); // 写入"TEXT"
+                Int32 sourceTextLength = ssource.ReadInt32(); // 原文本段长度
+                sdest.WriteInt32(0);
+
+                List<Int32> textIndexes = new List<Int32>();
+                if (texts[0] != "{TEXT}")
+                {
+                    throw new Exception("文本分段错误");
+                }
+
+                int iText = 1;
+                for (; iText < texts.Length && texts[iText] != "{NCPT}" && texts[iText] != "{NAME}"; iText++)
+                {
+                    textIndexes.Add((Int32)sdest.Position - textBlockOffset - 8); // 获取偏移
+                    sdest.Write(_sourceEncoding.GetBytes(texts[iText])); // 写入文本
+                    sdest.WriteInt32(0); // 写入0结尾
+                }
+                Int32 destTextLength = (Int32)sdest.Position - textBlockOffset - 8; // 文本段长度
+
+                sdest.Position = 8;
+                for (int i = 0; i < textIndexes.Count;i++ )
+                {
+                    sdest.Position += 4;
+                    sdest.WriteInt32(textIndexes[i]);
+                }
+                if (sdest.Position != textBlockOffset)
+                {
+                    throw new Exception("文本段写入失败");
+                }
+                sdest.Position += 4;
+                sdest.WriteInt32(destTextLength);
+
+                if (iText < texts.Length)
+                {
+                    ssource.Position = textBlockOffset + 8 + sourceTextLength;
+                    sdest.Position = textBlockOffset + 8 + destTextLength;
+                    if (texts[iText] == "{NCPT}")
+                    {
+                        ssource.Position += 4;
+                        Int32 ncptLength = ssource.ReadInt32(); // get ncpt block length
+                        ssource.Position -= 8;
+
+                        sdest.WriteFromStream(ssource, ncptLength + 8);
+                        iText++;
+                    }
+                    if (texts[iText] == "{NAME}")
+                    {
+                        sdest.WriteInt32BigEndian(0x4E414D45);
+                        Int32 nameBlockLengthPosition = (Int32)sdest.Position;
+                        sdest.WriteInt32(0); // 长度占位
+
+                        sdest.WriteInt16(0);
+                        for (iText = iText + 1; iText < texts.Length; iText++)
+                        {
+                            sdest.Write(_sourceEncoding.GetBytes(texts[iText]));
+                            sdest.WriteInt16(0);
+                        }
+                        Int32 nameBlockLength = (Int32)sdest.Position - nameBlockLengthPosition - 4;
+                        sdest.Position = nameBlockLengthPosition;
+                        sdest.WriteInt32(nameBlockLength);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("不支持的文件头");
+            }
             sdest.Close();
 
             return texts.Length;

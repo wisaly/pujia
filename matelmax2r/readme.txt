@@ -45,3 +45,14 @@ little-endian
 (
 * string,end with 00 00 00 00
 )
+4 byte fix data 4E 50 43 54 "NCPT"
+1 int32 ncpt block length
+(
+)
+4 byte fix data 4E 41 4D 45 "NAME"
+1 int32 name block length
+(
+2 byte 00 00
+string end with 00 00
+)
+2 byte 00 00
