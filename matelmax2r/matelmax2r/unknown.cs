@@ -345,15 +345,15 @@ namespace matelmax2r
             {
                 throw new Exception("路径不存在");
             }
-
-            string[] files = Directory.GetFiles(path, "*.unknown");
-            Console.WriteLine("共搜索到{0}个文件", files.Length);
+			string[] files = Directory.GetFiles(path, "*.unknown");
+            string[] dirs = Directory.GetDirectories(path);
+            Console.WriteLine("{0}:共搜索到{1}个文件,{2}个子目录", path, files.Length, dirs.Length);
 
             for (int i = 0; i < files.Length; i++)
             {
                 try
                 {
-                    Console.WriteLine("{0}/{1}已处理文件{2}:导入{3}行。",
+                    Console.WriteLine("{0}/{1}已处理文件{2}:导出{3}行。",
                         i + 1,
                         files.Length,
                         files[i],
@@ -361,8 +361,17 @@ namespace matelmax2r
                 }
                 catch (System.Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("[出错]{0}/{1}文件{2}:{3}",
+                        i + 1,
+                        files.Length,
+                        files[i],
+                        ex.Message);
                 }
+            }
+
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                import(dirs[i]);
             }
         }
     }
