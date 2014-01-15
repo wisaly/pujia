@@ -26,7 +26,7 @@ namespace imagepac
             for (int i = 0; i < fileCount; i++)
             {
                 Int32 fileLength = s.ReadInt32();
-                StreamEx sNew = new StreamEx(unpackdir + "\\" + i.ToString() + ".dds", FileMode.Create, FileAccess.Write);
+                StreamEx sNew = new StreamEx(unpackdir + "\\" + i.ToString("D5") + ".dds", FileMode.Create, FileAccess.Write);
 
                 Console.WriteLine("正在解包文件{0}/{1}:{2}->{3}", i + 1,fileCount, s.Position,fileLength);
 
@@ -43,7 +43,9 @@ namespace imagepac
 
             string[] inputFiles = Directory.GetFiles(input,"*.dds");
 
-            inputFiles.OrderBy(str => str);
+            
+            IEnumerable<string> orderFiles = inputFiles.OrderBy(str => int.Parse(str.Substring(str.LastIndexOf('\\') + 1, str.Length - str.LastIndexOf('\\') - 5)));
+//            IEnumerable<string> orderFiles = inputFiles.OrderBy(str => str);          
 
             Console.WriteLine("共有{0}个输入文件", inputFiles.Length);
 
@@ -51,14 +53,16 @@ namespace imagepac
 
             s.WriteInt32(inputFiles.Length);
 
-            for (int i = 0; i < inputFiles.Length; i++)
+            int i = 0;
+            foreach (string file in orderFiles)
             {
-                StreamEx sr = new StreamEx(inputFiles[i], FileMode.Open, FileAccess.Read);
-                Console.WriteLine("正在封入文件{0}/{1}:{2} {3}->{4}", i + 1,inputFiles[i], inputFiles.Length,s.Position, sr.Length);
+                StreamEx sr = new StreamEx(file, FileMode.Open, FileAccess.Read);
+                Console.WriteLine("正在封入文件{0}/{1}:{2} {3}->{4}", ++i, file, inputFiles.Length, s.Position, sr.Length);
                 s.WriteInt32((Int32)sr.Length);
 
                 s.WriteFromStream(sr, sr.Length);
             }
+
             s.Close();
         }
     }
