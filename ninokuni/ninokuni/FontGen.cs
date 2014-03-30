@@ -120,6 +120,7 @@ namespace khfontgen
                 g.TextRenderingHint = textRenderingHint;
                 //g.SmoothingMode=SmoothingMode.HighQuality;
                 StringFormat stringFormat = StringFormat.GenericTypographic;
+                stringFormat.FormatFlags &= ~StringFormatFlags.MeasureTrailingSpaces;
                 //stringFormat.LineAlignment = StringAlignment.Near;
                 //stringFormat.Alignment = StringAlignment.Near;
                 //stringFormat.FormatFlags = StringFormatFlags.
