@@ -11,6 +11,9 @@ namespace SDBJPY
     class BSDJPN
     {
         List<KeyValuePair<string, string>> _convertChar = new List<KeyValuePair<string, string>>();
+
+        Dictionary<char, char> _dicConvert = new Dictionary<char, char>();
+
         public BSDJPN()
         {
             _convertChar.Add(new KeyValuePair<string, string>("\n", "\r\n"));
@@ -20,18 +23,25 @@ namespace SDBJPY
             _convertChar.Add(new KeyValuePair<string, string>("∃", "∈"));
         }
 
-        public void AddConvertChar(string originMapPath,string newMapPath)
+        public void AddConvertChar(string newMapPath)
         {
-            var originmap = TblCharMappingFile.ReadFile(originMapPath);
             var newmap = TblCharMappingFile.ReadFile(newMapPath);
 
-            var diff = from o in originmap
-                       join n in newmap
-                       on o.CodeString equals n.CodeString
-                       where o.Character != n.Character
-                       select new KeyValuePair<string, string>(o.Character, n.Character);
+            var diff = from n in newmap
+                       select new KeyValuePair<string, string>(TextEncoding.UTF8.GetString(
+                           (n.Code >> 16) != 0 ? 
+                            new byte[]{(byte)(n.Code >> 16),(byte)(n.Code >> 8),(byte)n.Code}
+                            : (n.Code >> 8) != 0 ? new byte[] { (byte)(n.Code >> 8), (byte)n.Code }
+                                :new byte[]{(byte)n.Code}),
+                           n.Character);
 
-            _convertChar.AddRange(diff);
+            foreach (var diffItem in diff)
+            {
+                if (diffItem.Key != diffItem.Value)
+                {
+                    _dicConvert[diffItem.Value[0]] = diffItem.Key[0];
+                }
+            }
         }
 
         public KeyValuePair<string, string>[] Read(string path)
@@ -118,6 +128,8 @@ namespace SDBJPY
             Int32[] blockaddress = new Int32[count];
 
             s.Position = 0x8 + count * 8;
+
+
             for (int i = 0; i < count; i++)
             {
                 if (text[i].Key.Length == 0)
@@ -137,14 +149,26 @@ namespace SDBJPY
                 else
                 {
                     blockaddress[i] = (Int32)s.Position;
-                    string txt = text[i].Value;
 
+                    string txt = text[i].Value;
                     for (int k = 0; k < _convertChar.Count; k++)
                     {
                         txt = txt.Replace(_convertChar[k].Value, _convertChar[k].Key);
                     }
+                    char[] chrs = txt.ToCharArray();
 
-                    s.WriteString(txt, encoding.GetByteCount(txt) + 1, encoding);
+                    for (int j = 0; j < chrs.Length; j++)
+                    {
+                        if(_dicConvert.ContainsKey(chrs[j]))
+                        {
+                            chrs[j] = _dicConvert[chrs[j]];
+                        }
+                    }
+
+
+                    s.Write(encoding.GetBytes(chrs));
+                    s.WriteByte(0);
+                    //s.WriteString(txt.ToString(), encoding.GetByteCount(txt) + 1, encoding);
                 }
             }
 

@@ -30,25 +30,26 @@ namespace dragonsdogma
 
         static public int exportFile(string path)
         {
-            StreamEx s = new StreamEx(path, FileMode.Open, FileAccess.Read);
+            StreamEx ssource = new StreamEx(path, FileMode.Open, FileAccess.Read);
 
-            Int32 header = s.ReadInt32BigEndian();
+            Int32 header = ssource.ReadInt32BigEndian();
             if (header != 0x00444D47 )
             {
                 throw new Exception("不支持的文件头");
             }
 
-            s.Position = 0x18;
-            Int32 textCount = s.ReadInt32BigEndian();
-            Int32 textOffset = s.ReadInt32BigEndian() + textCount * 8 + 0x30;
-            s.Position = textOffset;
+            ssource.Position = 0x14;
+            Int32 tagCount = ssource.ReadInt32BigEndian();
+            Int32 textCount = ssource.ReadInt32BigEndian();
+            Int32 textOffset = ssource.ReadInt32BigEndian() + tagCount * 8 + 0x30;
+            ssource.Position = textOffset;
 
             List<string> texts = new List<string>();
-            while (s.Position < s.Length)
+            while (ssource.Position < ssource.Length)
             {
-                Int64 curPos = s.Position;
-                string curToken = s.ReadString((int)(s.Length - s.Position), _sourceEncoding);
-                s.Position = curPos + _sourceEncoding.GetByteCount(curToken) + 1;
+                Int64 curPos = ssource.Position;
+                string curToken = ssource.ReadString((int)(ssource.Length - ssource.Position), _sourceEncoding);
+                ssource.Position = curPos + _sourceEncoding.GetByteCount(curToken) + 1;
 
                 // 处理字符集差异
                 foreach (KeyValuePair<string, string> kvp in _convertChar)
@@ -75,9 +76,10 @@ namespace dragonsdogma
                 throw new Exception("不支持的文件头");
             }
 
-            ssource.Position = 0x18;
+            ssource.Position = 0x14;
+            Int32 tagCount = ssource.ReadInt32BigEndian();
             Int32 textCount = ssource.ReadInt32BigEndian();
-            Int32 textOffset = ssource.ReadInt32BigEndian() + textCount * 8 + 0x30;
+            Int32 textOffset = ssource.ReadInt32BigEndian() + tagCount * 8 + 0x30;
 
             StreamEx sdest = new StreamEx(path + ".imp", System.IO.FileMode.Create, System.IO.FileAccess.Write);
 

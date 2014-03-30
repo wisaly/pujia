@@ -36,12 +36,12 @@ namespace SDBJPY
 
                 KeyValuePair<string, string>[] pairs = keys.Select(
                         (key,idx) => new KeyValuePair<string, string>
-                            (key, blocks[idx].Substring(0, blocks[idx].Length - 5)))
+                            (key, blocks[idx].Length >= 5 ? blocks[idx].Substring(0, blocks[idx].Length - 5) : blocks[idx]))
                             .ToArray();
 
-                if (args.Count() >= 3)
+                if (args.Count() >= 2)
                 {
-                    bsdjpn.AddConvertChar(args[1], args[2]);
+                    bsdjpn.AddConvertChar(args[1]);
                 }
 
                 bsdjpn.Write(ff + "SDBJPN", pairs);
