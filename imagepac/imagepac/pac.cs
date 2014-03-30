@@ -26,7 +26,7 @@ namespace imagepac
             for (int i = 0; i < fileCount; i++)
             {
                 Int32 fileLength = s.ReadInt32();
-                StreamEx sNew = new StreamEx(unpackdir + "\\" + i.ToString() + ".dds", FileMode.Create, FileAccess.Write);
+                StreamEx sNew = new StreamEx(unpackdir + "\\" + i.ToString("D5") + ".dds", FileMode.Create, FileAccess.Write);
 
                 Console.WriteLine("正在解包文件{0}/{1}:{2}->{3}", i + 1,fileCount, s.Position,fileLength);
 
@@ -41,53 +41,29 @@ namespace imagepac
                 throw new Exception("输入参数必须是目录");
             }
 
-            string[] inputFiles = Directory.GetFiles(input);
+            string[] inputFiles = Directory.GetFiles(input,"*.dds");
 
-//             List<headerNode> headers = new List<headerNode>();
-//             int lastOffset = 0x10 + inputFiles.Length * 0x40;
-//             align(ref lastOffset);
-// 
-//             for (int i = 0; i < inputFiles.Length; i++)
-//             {
-//                 headerNode h = new headerNode();
-//                 FileInfo f = new FileInfo(inputFiles[i]);
-//                 h.fileName = f.Name;
-//                 h.fileLength = (int)f.Length;
-//                 h.fileOffset = lastOffset;
-// 
-//                 lastOffset += h.fileLength;
-//                 align(ref lastOffset);
-// 
-//                 headers.Add(h);
-//             }
-//             Console.WriteLine("共有{0}个输入文件", headers.Count);
-// 
-//             StreamEx s = new StreamEx(input + ".repack.dat", FileMode.Create, FileAccess.Write);
-// 
-//             s.WriteInt64BigEndian(fixHeaderPS3FS_V1);
-//             s.WriteInt32BigEndian(inputFiles.Length);
-//             s.WriteInt32BigEndian(0);
-// 
-//             for (int i = 0; i < headers.Count; i++)
-//             {
-//                 s.WriteSimpleString(headers[i].fileName, 0x30);
-//                 s.WriteInt32BigEndian(0);
-//                 s.WriteInt32BigEndian(headers[i].fileLength);
-//                 s.WriteInt32BigEndian(0);
-//                 s.WriteInt32BigEndian(headers[i].fileOffset);
-//             }
-//             Console.WriteLine("文件索引写入完毕");
-// 
-//             for (int i = 0; i < headers.Count; i++)
-//             {
-//                 Console.WriteLine("正在封入文件{0}/{1}:{2} ({3}->{4})", i + 1, headers.Count, headers[i].fileName, headers[i].fileOffset, headers[i].fileLength);
-// 
-//                 s.Position = headers[i].fileOffset;
-//                 StreamEx sr = new StreamEx(inputFiles[i], FileMode.Open, FileAccess.Read);
-//                 s.WriteFromStream(sr, headers[i].fileLength);
-//             }
-//             zeroTo(s, lastOffset);
-//             s.Close();
+            
+            IEnumerable<string> orderFiles = inputFiles.OrderBy(str => int.Parse(str.Substring(str.LastIndexOf('\\') + 1, str.Length - str.LastIndexOf('\\') - 5)));
+//            IEnumerable<string> orderFiles = inputFiles.OrderBy(str => str);          
+
+            Console.WriteLine("共有{0}个输入文件", inputFiles.Length);
+
+            StreamEx s = new StreamEx(input + ".repack.pac", FileMode.Create, FileAccess.Write);
+
+            s.WriteInt32(inputFiles.Length);
+
+            int i = 0;
+            foreach (string file in orderFiles)
+            {
+                StreamEx sr = new StreamEx(file, FileMode.Open, FileAccess.Read);
+                Console.WriteLine("正在封入文件{0}/{1}:{2} {3}->{4}", ++i, file, inputFiles.Length, s.Position, sr.Length);
+                s.WriteInt32((Int32)sr.Length);
+
+                s.WriteFromStream(sr, sr.Length);
+            }
+
+            s.Close();
         }
     }
 }

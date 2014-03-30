@@ -1,0 +1,400 @@
+#### 1 ####
+{:0930}
+FFX-2 STARTMAP
+
+#### 2 ####
+〓1
+
+#### 3 ####
+{:0930}
+{:1030}Event
+{:1031}Map
+{:1032}Battle
+{:1033}Program
+{:1034}Effect
+{:1035}Motion
+{:1036}Font
+{:1037}SKIPSTORY
+{:1038}LOAD
+
+#### 4 ####
+〓3
+
+#### 5 ####
+{:0930}
+{:1030}Iwabuchi{:0754}{:1034}Hishinuma
+{:1031}Toriyama{:0754}{:1035}Matsuda
+{:1032}Nakazato{:0754}{:1036}Kitase
+{:1033}Nojima{:0754}{:1037}Back
+
+#### 6 ####
+〓5
+
+#### 7 ####
+{:0930}
+{:0731}SQUARE ENIX{:0731}
+{:0A88}[FFX-2US Ver. 0905]{:0A41}
+
+
+#### 8 ####
+〓7
+
+#### 9 ####
+{:0930}
+{:1030} 
+ {:1031}
+           
+
+#### 10 ####
+〓9
+
+#### 11 ####
+{:0930}
+
+  {:1030}
+           
+
+#### 12 ####
+〓11
+
+#### 13 ####
+{:0930}
+{:1030} 
+  {:1031}
+{:1032}Strong and New Game
+
+#### 14 ####
+〓13
+
+#### 15 ####
+{:0930}
+{:0B3B}{:0A52} Debug
+
+#### 16 ####
+〓15
+
+#### 17 ####
+{:0930}
+{:1030}SKIPSTORY
+{:1031}BATTLE
+{:1032}EVENT
+{:1033}PROGRAM
+
+#### 18 ####
+〓17
+
+#### 19 ####
+{:0930}
+SORRY! UNDER CONSTRUCTION!
+
+#### 20 ####
+〓19
+
+#### 21 ####
+{:0930}
+{:1030}[00]New Game{:10FF}{:0763} {:1031}Battle On{:10FF}
+{:1032}[01]STORY LV1{:10FF}{:076D}
+{:1033}[02]STORY LV2
+{:1034}[03]STORY LV3{:10FF}{:076D}
+{:1035}[04]STORY LV4{:10FF}
+{:1036}[05]STORY LV5{:10FF}
+{:1037}[Strong]New Game{:10FF}
+{:1038}[E3 Demo]{:0A41}{:10FF}
+{:1039}BACK{:10FF}{:0732}{:0A97} VER. 9/05 21:00{:0A41}
+
+#### 22 ####
+〓21
+
+#### 23 ####
+{:0930}
+{:1030}[00]New Game{:10FF}{:0763} {:1031}Battle Off{:10FF}
+{:1032}[01] STORY LV1{:10FF}{:076D}
+{:1033}[02]STORY LV2
+{:1034}[03]STORY LV3{:10FF}{:076D}
+{:1035}[04] STORY LV4{:10FF}
+{:1036}[05] STORY LV5{:10FF}{:0A41}
+{:1037}[STRONG] New Game{:10FF}
+{:1038}[E3 Demo]{:0A41}{:10FF}
+{:1039}BACK{:10FF}{:0732}{:0A97} Ver. 9/05 21:00{:0A41}
+
+#### 24 ####
+〓23
+
+#### 25 ####
+{:0930}
+{:0A43}[Decision by Kamomedan]{:0A41}
+{:0745}{:1030}Youth League Side
+{:0745}{:1031}New Yevon Side
+
+#### 26 ####
+〓25
+
+#### 27 ####
+{:0930}
+{:1030}{:1330} Live
+{:1031}Opening Luka
+{:1032}Opening Airship
+{:1033}Floating Ruins of Gagazet
+{:1034}Back
+
+#### 28 ####
+〓27
+
+#### 29 ####
+{:0930}
+{:1030}LV1 Brother's Catastrophe
+{:1031}LV1 Mission Select
+{:1032}LV1 Kilika Sphere Hunt
+{:1033}Back
+
+#### 30 ####
+〓29
+
+#### 31 ####
+{:0930}
+{:1030}LV2 Brother's Distressful Decision
+{:1031}LV2 Combat Suit Mission
+{:1032}LV2 Sneak into Leblanc's Base
+{:1033}LV2 Infiltrate Bevelle
+{:1034}BACK
+
+#### 32 ####
+〓31
+
+#### 33 ####
+{:0930}
+{:1030}LV3 Temples S0S
+{:1031}LV3 Mission Select
+{:1032}LV3 Joze Temple SOS
+{:1033}BACK
+
+#### 34 ####
+〓33
+
+#### 35 ####
+{:0930}
+{:1030}LV4 Yuna Back Home
+{:1031}LV4 Moonflow Searching Tobli
+{:1032}LV4 Hypello Advertisement Squad
+{:1033}LV4 Thunder Plain Live
+{:1034}LV4 Tsushin Sphere
+{:1035}Back
+
+#### 36 ####
+〓35
+
+#### 37 ####
+{:0930}
+{:1030}LV4-A Tsushin Sphere
+{:1031}LV4-B Tsushin Sphere
+{:1032}LV4-C Tsushin Sphere{:1033}LV5 Tsushin Sphere
+
+#### 38 ####
+〓37
+
+#### 39 ####
+{:0930}
+{:1030}LV5 Kamome Final Mission Meeting
+{:1031}LV5 Graduation Mission Select
+{:1032}LV5 The Depths of the Farplane
+{:1033}LV5 Last Dungeon
+{:1034}LV5 Last Battle
+{:1035}BACK
+
+#### 40 ####
+〓39
+
+#### 41 ####
+{:0930}
+{:1030}{:2038}
+{:1031}{:203F}
+{:1032}{:204C}
+{:1033}Under Bevel
+{:1034}Calm Lands Bottom of the Gorge
+
+#### 42 ####
+〓41
+
+#### 43 ####
+{:0930}
+{:1030}Gullwings Swoop Into Action!
+{:1031}Operation: Infiltrate Bevelle!
+
+#### 44 ####
+〓43
+
+#### 45 ####
+{:0930}
+{:1030}Save
+{:1031}Cancel
+
+#### 46 ####
+〓45
+
+#### 47 ####
+{:0930}
+{:1030}Save
+{:1031}Board airship
+{:1032}Cancel
+
+#### 48 ####
+〓47
+
+#### 49 ####
+{:0930}
+{:0A43}{:0731}Save Sphere Tutorial{:0A41}
+{:8E} Touch a Save Sphere to fully restore the
+{:07EC}party's HP/MP and cure all status ailments.
+{:8E} Select "{:0A43}Save{:0A41}" to save your progress.
+{:8E} Select "{:0A43}Board airship{:0A41}" to return to the Celsius.
+
+#### 50 ####
+〓49
+
+#### 51 ####
+{:0930}
+HP and MP restored!
+
+#### 52 ####
+〓51
+
+#### 53 ####
+{:0930}
+{:0743}{:07E3}{:0B40}{:074A}Camera
+{:0B33}{:074A}Zoom
+{:0744}{:0B37}{:074A}Done
+
+#### 54 ####
+〓53
+
+#### 55 ####
+{:0930}
+{:0C32}{:0A94}Offline{:0A41}{:0C3F}
+{:0B37} Done
+
+#### 56 ####
+〓55
+
+#### 57 ####
+{:0930}
+Save your progress?
+{:0751}{:07E1}{:1030}Yes
+{:0751}{:07E1}{:1031}No
+
+#### 58 ####
+〓57
+
+#### 59 ####
+{:0930}
+{:0A43}{:0731}New Game Plus{:0A41}
+Play through the game again using all the
+dresspheres and items you've collected and
+all the abilities you've learned. Find and
+complete missions you may have missed and
+write a whole new story!
+
+#### 60 ####
+〓59
+
+#### 61 ####
+{:0930}
+Save New Game Plus data?
+{:0757}{:1030}Yes
+{:0757}{:1031}No
+
+#### 62 ####
+〓61
+
+#### 63 ####
+{:0930}
+{:0A43}{:0731}Special Dresspheres{:0A41}
+After changing to {:0A43}all of the dresspheres{:0A41} on
+a character's active Garment Grid, call up
+the Garment Grid with {:0B32} and then press {:0B33}
+to activate the special dressphere.
+
+#### 64 ####
+〓63
+
+#### 65 ####
+{:0930}
+You found {:1332}'s special dressphere, {:0A43}Full Throttle{:0A41}!
+
+#### 66 ####
+〓65
+
+#### 67 ####
+{:0930}
+You found {:1331}'s special dressphere, {:0A43}Machina Maw{:0A41}!
+
+#### 68 ####
+〓67
+
+#### 69 ####
+{:0930}
+You found {:1330}'s special dressphere, {:0A43}Floral Fallal{:0A41}!
+
+#### 70 ####
+〓69
+
+#### 71 ####
+{:0930}
+You "liberated" a {:0A43}Syndicate Uniform{:0A41}!
+
+#### 72 ####
+〓71
+
+#### 73 ####
+{:0930}
+Insufficient free space on memory card (PS2)
+in MEMORY CARD slot 1. At least 186KB of free
+space is required to save {:1958} data.
+
+#### 74 ####
+〓73
+
+#### 75 ####
+{:0930}
+Would you still like to start the game?
+{:0762}{:1030}Yes
+{:0762}{:1031}No
+
+#### 76 ####
+〓75
+
+#### 77 ####
+{:0930}
+Insufficient free space on memory cards (PS2)
+in MEMORY CARD slots 1 and 2. At least 186KB
+of free space is required to save {:1958} data.
+
+#### 78 ####
+〓77
+
+#### 79 ####
+{:0930}
+Insufficient free space on memory card (PS2)
+in MEMORY CARD slot 2. At least 186KB of free
+space is required to save {:1958} data.
+
+#### 80 ####
+〓79
+
+#### 81 ####
+{:0930}
+No memory card (PS2) found in MEMORY CARD
+slot 1 or 2. At least 186KB of free space is
+required to save {:1958} data.
+
+#### 82 ####
+〓81
+
+#### 83 ####
+{:0930}
+{:0A94}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!! TEXT DEBUG END !!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#### 84 ####
+〓83
+
