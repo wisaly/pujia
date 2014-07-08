@@ -18,7 +18,7 @@ namespace togf
             if (args.Length != 2)
             {
                 Console.WriteLine("导出（目录）： togf -e x:\\data");
-                Console.WriteLine("导入（目录）： togf -i x:\\data");
+                Console.WriteLine("导入（目录）： togf -i utf8tog.txt x:\\data");
                 Console.WriteLine("导出TOG（目录）： togf -tog x:\\data");
                 return;
             }
@@ -39,7 +39,7 @@ namespace togf
             {
                 try
                 {
-                    scs.import(args[1]);
+                    scs.import(args[1],args[2]);
                     Console.WriteLine("导入完毕");
                 }
                 catch (System.Exception ex)

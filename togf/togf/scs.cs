@@ -7,6 +7,7 @@ using Firefly;
 using Firefly.Texting;
 using System.Data.SQLite;
 using System.Data;
+using Firefly.TextEncoding;
 
 namespace togf
 {
@@ -27,6 +28,27 @@ namespace togf
                 //new KeyValuePair<string, string>("∀", "∨"),
                 //new KeyValuePair<string, string>("∃", "∈")
             };
+        static Dictionary<char, char> _dicConvert = new Dictionary<char, char>();
+        static public void readMapFile(string newMapPath)
+        {
+            var newmap = TblCharMappingFile.ReadFile(newMapPath);
+
+            var diff = from n in newmap
+                       select new KeyValuePair<string, string>(TextEncoding.UTF8.GetString(
+                           (n.Code >> 16) != 0 ?
+                            new byte[] { (byte)(n.Code >> 16), (byte)(n.Code >> 8), (byte)n.Code }
+                            : (n.Code >> 8) != 0 ? new byte[] { (byte)(n.Code >> 8), (byte)n.Code }
+                                : new byte[] { (byte)n.Code }),
+                           n.Character);
+
+            foreach (var diffItem in diff)
+            {
+                if (diffItem.Key != diffItem.Value)
+                {
+                    _dicConvert[diffItem.Value[0]] = diffItem.Key[0];
+                }
+            }
+        }
 
         static Encoding _sourceEncoding = Encoding.GetEncoding("shift-jis");
         static Encoding _destEncoding = Encoding.GetEncoding("gb2312");
@@ -85,7 +107,18 @@ namespace togf
                 {
                     texts[i] = texts[i].Replace(kvp.Value, kvp.Key);
                 }
-                s.WriteString(texts[i], _sourceEncoding.GetByteCount(texts[i]) + 1, _sourceEncoding);
+                char[] chrs = texts[i].ToCharArray();
+
+                for (int j = 0; j < chrs.Length; j++)
+                {
+                    if (_dicConvert.ContainsKey(chrs[j]))
+                    {
+                        chrs[j] = _dicConvert[chrs[j]];
+                    }
+                }
+                s.Write(_sourceEncoding.GetBytes(chrs));
+                s.WriteByte(0);
+                //s.WriteString(texts[i], _sourceEncoding.GetByteCount(texts[i]) + 1, _sourceEncoding);
             }
 
             s.Position = 4;
@@ -202,8 +235,13 @@ namespace togf
             }
         }
 
-        static public void import(string path)
+        static public void import(string mapfile,string path)
         {
+            if (!File.Exists(mapfile))
+            {
+                throw new Exception("码表文件不存在");
+            }
+            readMapFile(mapfile);
 
             if (!Directory.Exists(path))
             {
